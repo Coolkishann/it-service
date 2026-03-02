@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  officeId  Int?
+  createdAt DateTime @default(now())
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  officeId  Int
+  createdAt DateTime @default(now())
+  branches  Branch[]
+}
+
+model Branch {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  customerId Int
+  customer   Customer @relation(fields: [customerId], references: [id])
+
+  officeId Int
+
+  createdAt DateTime @default(now())
+
+  devices Device[] // ⭐ ADD THIS LINE
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  ENGINEER
+}
+
+enum DeviceCategory {
+  LAPTOP
+  DESKTOP
+  PRINTER
+  AIO
+}
+
+enum ProcessorType {
+  INTEL_I3
+  INTEL_I5
+  INTEL_I7
+  AMD_RYZEN5
+  AMD_RYZEN7
+}
+
+model Device {
+  id Int @id @default(autoincrement())
+
+  category DeviceCategory
+  company  String
+  model    String
+
+  serialNumber String @unique
+
+  ram     String?
+  storage String?
+  os      String?
+
+  motherboardName   String?
+  motherboardSerial String?
+
+  processor ProcessorType?
+
+  branchId Int
+  branch   Branch @relation(fields: [branchId], references: [id])
+
+  officeId Int
+
+  createdAt DateTime @default(now())
+}
