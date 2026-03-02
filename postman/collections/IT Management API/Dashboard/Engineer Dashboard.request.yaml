@@ -1,0 +1,6 @@
+$kind: http-request
+name: Engineer Dashboard
+method: GET
+url: '{{baseUrl}}/dashboard/engineer'
+order: 3000
+description: Access the Engineer dashboard. Requires ENGINEER role.

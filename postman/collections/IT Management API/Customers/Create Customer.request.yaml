@@ -1,0 +1,16 @@
+$kind: http-request
+name: Create Customer
+method: POST
+url: '{{baseUrl}}/customers'
+order: 1000
+description: Create a new customer. Requires SUPER_ADMIN or ADMIN role.
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Acme Corporation",
+      "officeId": 1
+    }

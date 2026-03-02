@@ -1,28 +1,31 @@
 import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
+    Injectable,
+    CanActivate,
+    ExecutionContext,
 } from '@nestjs/common';
 
 @Injectable()
 export class OfficeGuard implements CanActivate {
 
-  canActivate(context: ExecutionContext): boolean {
+    canActivate(context: ExecutionContext): boolean {
+        const request = context.switchToHttp().getRequest();
+        const user = request.user;
 
-    const req = context.switchToHttp().getRequest();
-    const user = req.user;
+        if (!user) {
+            return false;
+        }
 
-    // Super admin can see everything
-    if (user.role === 'SUPER_ADMIN') {
-      req.officeFilter = {};
-      return true;
+        // Super admin can see everything
+        if (user.role === 'SUPER_ADMIN') {
+            request.officeFilter = {};
+            return true;
+        }
+
+        // restrict by office
+        request.officeFilter = {
+            officeId: user.officeId,
+        };
+
+        return true;
     }
-
-    // restrict by office
-    req.officeFilter = {
-      officeId: user.officeId,
-    };
-
-    return true;
-  }
 }

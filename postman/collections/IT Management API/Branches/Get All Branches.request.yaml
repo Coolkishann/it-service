@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get All Branches
+method: GET
+url: '{{baseUrl}}/branches'
+order: 2000
+description: |-
+  Get all branches. Results are filtered based on the user's office assignment.
+  
+  Uses OfficeGuard for office-based access control.

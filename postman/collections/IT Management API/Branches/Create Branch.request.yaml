@@ -1,0 +1,17 @@
+$kind: http-request
+name: Create Branch
+method: POST
+url: '{{baseUrl}}/branches'
+order: 1000
+description: Create a new branch for a customer. Requires SUPER_ADMIN or ADMIN role.
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Main Office",
+      "customerId": 1,
+      "officeId": 1
+    }

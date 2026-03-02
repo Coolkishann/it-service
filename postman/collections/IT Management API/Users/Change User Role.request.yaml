@@ -1,0 +1,23 @@
+$kind: http-request
+name: Change User Role
+method: PATCH
+url: '{{baseUrl}}/users/change-role/:id'
+order: 1000
+description: |-
+  Change a user's role. Requires SUPER_ADMIN role.
+
+  Available roles: SUPER_ADMIN, ADMIN, ENGINEER
+headers:
+  - key: Content-Type
+    value: application/json
+pathVariables:
+  - key: id
+    value: '1'
+    description: User ID
+body:
+  type: json
+  content: |-
+    {
+      "role": "ADMIN"
+    }
+examples: ./.resources\Change User Role.resources\examples

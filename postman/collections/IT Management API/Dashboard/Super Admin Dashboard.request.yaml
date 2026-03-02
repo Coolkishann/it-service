@@ -1,0 +1,6 @@
+$kind: http-request
+name: Super Admin Dashboard
+method: GET
+url: '{{baseUrl}}/dashboard/super-admin'
+order: 1000
+description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.

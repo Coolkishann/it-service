@@ -1,0 +1,9 @@
+$kind: http-request
+name: Get All Customers
+method: GET
+url: '{{baseUrl}}/customers'
+order: 2000
+description: |-
+  Get all customers. Results are filtered based on the user's office assignment.
+  
+  Uses OfficeGuard for office-based access control.

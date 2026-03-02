@@ -13,6 +13,8 @@ model User {
   password  String
   role      Role
   officeId  Int?
+  workUpdates WorkUpdate[]
+  assignedCalls ServiceCall[]
   createdAt DateTime @default(now())
 }
 
@@ -82,5 +84,82 @@ model Device {
 
   officeId Int
 
+  serviceCalls ServiceCall[]
+
   createdAt DateTime @default(now())
+}
+
+
+enum CallStatus {
+  PENDING
+  UNDER_OBSERVATION
+  RESOLVED
+}
+
+model ServiceCall {
+  id          Int      @id @default(autoincrement())
+
+  problem     String
+  errorCode   String?
+
+  status      CallStatus @default(PENDING)
+
+  deviceId    Int
+  device      Device @relation(fields: [deviceId], references: [id])
+
+  engineerId  Int?
+  engineer    User?  @relation(fields: [engineerId], references: [id])
+
+  officeId    Int
+workUpdates WorkUpdate[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WorkUpdate {
+  id          Int      @id @default(autoincrement())
+
+  description String
+
+  serviceCallId Int
+  serviceCall   ServiceCall @relation(fields: [serviceCallId], references: [id])
+
+  engineerId Int
+  engineer   User @relation(fields: [engineerId], references: [id])
+
+  createdAt DateTime @default(now())
+images WorkImage[]
+  spareParts SparePart[]
+}
+
+model SparePart {
+  id        Int      @id @default(autoincrement())
+
+  partName  String
+  capacity  String?
+
+  oldSerial String?
+  newSerial String?
+
+  workUpdateId Int
+  workUpdate   WorkUpdate @relation(fields: [workUpdateId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model WorkImage {
+  id           Int @id @default(autoincrement())
+
+  imageUrl     String
+  type         ImageType
+
+  workUpdateId Int
+  workUpdate   WorkUpdate @relation(fields: [workUpdateId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+enum ImageType {
+  BEFORE
+  AFTER
 }

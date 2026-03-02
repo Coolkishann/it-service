@@ -1,0 +1,30 @@
+$kind: http-request
+name: Create Device
+method: POST
+url: '{{baseUrl}}/devices'
+order: 1000
+description: |-
+  Create a new device. Requires SUPER_ADMIN or ADMIN role.
+  
+  Device categories: LAPTOP, DESKTOP, PRINTER, AIO
+  Processor types: INTEL_I3, INTEL_I5, INTEL_I7, AMD_RYZEN5, AMD_RYZEN7
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "category": "LAPTOP",
+      "company": "Dell",
+      "model": "Latitude 5520",
+      "serialNumber": "ABC123XYZ",
+      "ram": "16GB",
+      "storage": "512GB SSD",
+      "os": "Windows 11 Pro",
+      "motherboardName": "Dell Inc.",
+      "motherboardSerial": "MB123456",
+      "processor": "INTEL_I5",
+      "branchId": 1,
+      "officeId": 1
+    }
