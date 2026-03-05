@@ -1,9 +1,23 @@
 $kind: http-request
-name: Super Admin Dashboard
-method: GET
-url: '{{baseUrl}}/dashboard/super-admin'
-order: 1000
-description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.
+name: Update Service Call Status
+method: PATCH
+url: '{{baseUrl}}/service-calls/:id/status'
+order: 3000
+description: |-
+  Update the status of a service call.
+pathVariables:
+  - key: id
+    value: '1'
+    description: Service call ID
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "IN_PROGRESS"
+    }
 scripts:
   - type: afterResponse
     language: text/javascript

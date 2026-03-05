@@ -1,0 +1,7 @@
+$kind: collection
+name: Work Updates
+description: |-
+  Work update management for service calls.
+  - Create work update requires ENGINEER or ADMIN role
+  - View history available for all authenticated users
+order: 7000

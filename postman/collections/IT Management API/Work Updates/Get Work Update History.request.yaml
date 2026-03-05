@@ -1,9 +1,14 @@
 $kind: http-request
-name: Super Admin Dashboard
+name: Get Work Update History
 method: GET
-url: '{{baseUrl}}/dashboard/super-admin'
-order: 1000
-description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.
+url: '{{baseUrl}}/work-updates/:callId'
+order: 2000
+description: |-
+  Get all work updates for a specific service call.
+pathVariables:
+  - key: callId
+    value: '1'
+    description: Service call ID
 scripts:
   - type: afterResponse
     language: text/javascript

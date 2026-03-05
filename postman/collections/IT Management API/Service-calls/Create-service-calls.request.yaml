@@ -1,0 +1,20 @@
+$kind: http-request
+name: Create-service-calls
+url: "{{baseUrl}}/service-calls"
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \  \"problem\": \"F30 Error\",\r
+
+    \  \"errorCode\": \"F30\",\r
+
+    \  \"deviceId\": 1,\r
+
+    \  \"engineerId\": 3,\r
+
+    \  \"officeId\": 1\r
+
+    }"
+order: 1929323312076126

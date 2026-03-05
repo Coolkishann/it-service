@@ -1,0 +1,32 @@
+$kind: http-request
+name: Create-updates
+url: "{{baseUrl}}/work-updates"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"description\": \"F30 error verified. SSD replaced.\",\r
+
+    \  \"serviceCallId\": 1,\r
+
+    \  \"engineerId\": 3,\r
+
+    \  \"spareParts\": [\r
+
+    \    {\r
+
+    \      \"partName\": \"SSD\",\r
+
+    \      \"capacity\": \"480GB\",\r
+
+    \      \"oldSerial\": \"OLD123\",\r
+
+    \      \"newSerial\": \"NEW456\"\r
+
+    \    }\r
+
+    \  ]\r
+
+    }"
+order: 1772450040326

@@ -1,0 +1,6 @@
+$kind: collection
+name: Uploads
+description: |-
+  File upload endpoints.
+  Used for uploading images and attachments.
+order: 8000

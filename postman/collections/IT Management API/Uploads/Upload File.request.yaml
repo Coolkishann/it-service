@@ -1,9 +1,18 @@
 $kind: http-request
-name: Super Admin Dashboard
-method: GET
-url: '{{baseUrl}}/dashboard/super-admin'
+name: Upload File
+method: POST
+url: '{{baseUrl}}/uploads'
 order: 1000
-description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.
+description: |-
+  Upload a file (image or attachment).
+  Uses multipart/form-data with 'file' field.
+body:
+  type: formdata
+  content:
+    - key: file
+      type: file
+      src: ''
+      description: File to upload
 scripts:
   - type: afterResponse
     language: text/javascript
@@ -17,5 +26,5 @@ scripts:
       });
 
       pm.test("Status code is success", function () {
-          pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);
+          pm.expect(pm.response.code).to.be.oneOf([200, 201]);
       });

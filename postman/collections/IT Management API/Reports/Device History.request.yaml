@@ -1,9 +1,15 @@
 $kind: http-request
-name: Super Admin Dashboard
+name: Device History
 method: GET
-url: '{{baseUrl}}/dashboard/super-admin'
-order: 1000
-description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.
+url: '{{baseUrl}}/reports/device-history/:id'
+order: 2000
+description: |-
+  Get service call history for a specific device.
+  Returns all service calls associated with the device.
+pathVariables:
+  - key: id
+    value: '1'
+    description: Device ID
 scripts:
   - type: afterResponse
     language: text/javascript

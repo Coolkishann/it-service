@@ -1,26 +1,24 @@
 $kind: http-request
-name: Change User Role
-method: PATCH
-url: '{{baseUrl}}/users/change-role/:id'
+name: Create Service Call
+method: POST
+url: '{{baseUrl}}/service-calls'
 order: 1000
 description: |-
-  Change a user's role. Requires SUPER_ADMIN role.
-
-  Available roles: SUPER_ADMIN, ADMIN, ENGINEER
+  Create a new service call.
+  Requires ADMIN, SUPER_ADMIN, or ENGINEER role.
 headers:
   - key: Content-Type
     value: application/json
-pathVariables:
-  - key: id
-    value: '1'
-    description: User ID
 body:
   type: json
   content: |-
     {
-      "role": "ADMIN"
+      "title": "Printer not working",
+      "description": "Office printer showing error code E-01",
+      "priority": "HIGH",
+      "deviceId": 1,
+      "customerId": 1
     }
-examples: ./.resources\Change User Role.resources\examples
 scripts:
   - type: afterResponse
     language: text/javascript

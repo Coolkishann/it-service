@@ -5,11 +5,15 @@ import { RolesGuard } from './common/guards/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+
   app.enableCors();
+
+  const reflector = app.get(Reflector);
   app.useGlobalGuards(
-  new JwtAuthGuard(),
-  new RolesGuard(app.get(Reflector)),
-);  
+    new JwtAuthGuard(),
+    new RolesGuard(reflector),
+  );
+
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

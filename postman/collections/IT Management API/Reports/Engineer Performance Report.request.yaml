@@ -1,9 +1,11 @@
 $kind: http-request
-name: Super Admin Dashboard
+name: Engineer Performance Report
 method: GET
-url: '{{baseUrl}}/dashboard/super-admin'
+url: '{{baseUrl}}/reports/engineer-performance'
 order: 1000
-description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.
+description: |-
+  Get engineer performance report with statistics.
+  Returns performance metrics for all engineers.
 scripts:
   - type: afterResponse
     language: text/javascript

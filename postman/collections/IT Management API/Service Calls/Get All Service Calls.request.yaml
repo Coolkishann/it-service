@@ -1,9 +1,11 @@
 $kind: http-request
-name: Super Admin Dashboard
+name: Get All Service Calls
 method: GET
-url: '{{baseUrl}}/dashboard/super-admin'
-order: 1000
-description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.
+url: '{{baseUrl}}/service-calls'
+order: 2000
+description: |-
+  Get all service calls.
+  Results are filtered by office based on user's role and assigned office.
 scripts:
   - type: afterResponse
     language: text/javascript

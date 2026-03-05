@@ -13,6 +13,7 @@ import { WorkUpdatesModule } from './work-updates/work-updates.module';
 import { UploadsModule } from './uploads/uploads.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
+    ReportsModule,
   ],
   controllers: [AppController],   // ⭐ MUST BE HERE
 })

@@ -1,9 +1,11 @@
 $kind: http-request
-name: Super Admin Dashboard
+name: Branch Report
 method: GET
-url: '{{baseUrl}}/dashboard/super-admin'
-order: 1000
-description: Access the Super Admin dashboard. Requires SUPER_ADMIN role.
+url: '{{baseUrl}}/reports/branch-report'
+order: 3000
+description: |-
+  Get branch-level report with statistics.
+  Returns aggregated data for all branches.
 scripts:
   - type: afterResponse
     language: text/javascript

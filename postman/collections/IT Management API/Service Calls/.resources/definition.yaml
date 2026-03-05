@@ -1,0 +1,8 @@
+$kind: collection
+name: Service Calls
+description: |-
+  Service call management endpoints.
+  - Create requires ADMIN/SUPER_ADMIN/ENGINEER role
+  - List is office-restricted
+  - Status update available for all authenticated users
+order: 6000
