@@ -6,11 +6,15 @@ import { RolesGuard } from './common/guards/roles.guard';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
 
   const reflector = app.get(Reflector);
   app.useGlobalGuards(
-    new JwtAuthGuard(),
+    new JwtAuthGuard(reflector),
     new RolesGuard(reflector),
   );
 
