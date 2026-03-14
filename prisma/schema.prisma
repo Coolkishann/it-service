@@ -1,3 +1,5 @@
+// prisma/schema.prisma - COMPLETE UPDATED SCHEMA
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,159 +9,228 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role
-  officeId  Int?
-  workUpdates WorkUpdate[]
-  assignedCalls ServiceCall[]
-  createdAt DateTime @default(now())
+  id              Int            @id @default(autoincrement())
+  name            String
+  email           String         @unique
+  password        String
+  role            String         @default("ENGINEER") // SUPER_ADMIN, ADMIN, ENGINEER
+  officeId        Int?
+  office          Office?        @relation(fields: [officeId], references: [id])
+  phone           String?
+  avatar          String?
+  isActive        Boolean        @default(true)
+  lastLoginAt     DateTime?
+  assignedCalls   ServiceCall[]  @relation("EngineerCalls")
+  workUpdates     WorkUpdate[]   @relation("EngineerUpdates")
+  activityLogs    ActivityLog[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([email])
+  @@index([officeId])
+}
+
+model Office {
+  id           Int           @id @default(autoincrement())
+  name         String
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  phone        String?
+  email        String?
+  users        User[]
+  customers    Customer[]
+  branches     Branch[]
+  devices      Device[]
+  serviceCalls ServiceCall[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model Customer {
-  id        Int      @id @default(autoincrement())
-  name      String
-  officeId  Int
-  createdAt DateTime @default(now())
-  branches  Branch[]
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String?
+  phone         String?
+  address       String
+  city          String?
+  state         String?
+  zipCode       String?
+  country       String?
+  contactPerson String?
+  taxId         String?
+  officeId      Int
+  office        Office    @relation(fields: [officeId], references: [id])
+  branches      Branch[]
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([officeId])
+  @@index([name])
 }
 
 model Branch {
-  id   Int    @id @default(autoincrement())
-  name String
+  id            Int       @id @default(autoincrement())
+  name          String
+  address       String
+  city          String?
+  state         String?
+  zipCode       String?
+  phone         String?
+  email         String?
+  contactPerson String?
+  customerId    Int
+  customer      Customer  @relation(fields: [customerId], references: [id])
+  officeId      Int
+  office        Office    @relation(fields: [officeId], references: [id])
+  devices       Device[]
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  customerId Int
-  customer   Customer @relation(fields: [customerId], references: [id])
-
-  officeId Int
-
-  createdAt DateTime @default(now())
-
-  devices Device[] // ⭐ ADD THIS LINE
-}
-
-enum Role {
-  SUPER_ADMIN
-  ADMIN
-  ENGINEER
-}
-
-enum DeviceCategory {
-  LAPTOP
-  DESKTOP
-  PRINTER
-  AIO
-}
-
-enum ProcessorType {
-  INTEL_I3
-  INTEL_I5
-  INTEL_I7
-  AMD_RYZEN5
-  AMD_RYZEN7
+  @@index([customerId])
+  @@index([officeId])
 }
 
 model Device {
-  id Int @id @default(autoincrement())
+  id                  Int           @id @default(autoincrement())
+  category            String        // LAPTOP, DESKTOP, PRINTER, AIO, SERVER, NETWORK
+  company             String
+  model               String
+  serialNumber        String        @unique
+  ram                 String?
+  storage             String?
+  os                  String?
+  motherboardName     String?
+  motherboardSerial   String?
+  processor           String?       // INTEL_I3, INTEL_I5, INTEL_I7, AMD_RYZEN5, etc.
+  installationDate    DateTime?
+  warrantyExpiry      DateTime?
+  purchasePrice       Float?
+  purchaseOrderNumber String?
+  status              String        @default("ACTIVE") // ACTIVE, FAULTY, MAINTENANCE, RETIRED
+  notes               String?
+  branchId            Int
+  branch              Branch        @relation(fields: [branchId], references: [id])
+  officeId            Int
+  office              Office        @relation(fields: [officeId], references: [id])
+  serviceCalls        ServiceCall[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 
-  category DeviceCategory
-  company  String
-  model    String
-
-  serialNumber String @unique
-
-  ram     String?
-  storage String?
-  os      String?
-
-  motherboardName   String?
-  motherboardSerial String?
-
-  processor ProcessorType?
-
-  branchId Int
-  branch   Branch @relation(fields: [branchId], references: [id])
-
-  officeId Int
-
-  serviceCalls ServiceCall[]
-
-  createdAt DateTime @default(now())
-}
-
-
-enum CallStatus {
-  PENDING
-  UNDER_OBSERVATION
-  RESOLVED
+  @@index([serialNumber])
+  @@index([branchId])
+  @@index([officeId])
+  @@index([status])
 }
 
 model ServiceCall {
-  id          Int      @id @default(autoincrement())
+  id              Int          @id @default(autoincrement())
+  title           String       // Main issue title
+  description     String       // Detailed description
+  errorCode       String?
+  priority        String       @default("MEDIUM") // LOW, MEDIUM, HIGH, CRITICAL
+  status          String       @default("PENDING") // PENDING, IN_PROGRESS, RESOLVED, CLOSED, CANCELLED
+  scheduledDate   DateTime?
+  resolvedDate    DateTime?
+  resolutionNotes String?
+  deviceId        Int
+  device          Device       @relation(fields: [deviceId], references: [id])
+  engineerId      Int?
+  engineer        User?        @relation("EngineerCalls", fields: [engineerId], references: [id])
+  officeId        Int
+  office          Office       @relation(fields: [officeId], references: [id])
+  workUpdates     WorkUpdate[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
-  problem     String
-  errorCode   String?
-
-  status      CallStatus @default(PENDING)
-
-  deviceId    Int
-  device      Device @relation(fields: [deviceId], references: [id])
-
-  engineerId  Int?
-  engineer    User?  @relation(fields: [engineerId], references: [id])
-
-  officeId    Int
-workUpdates WorkUpdate[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  @@index([deviceId])
+  @@index([engineerId])
+  @@index([officeId])
+  @@index([status])
+  @@index([priority])
 }
 
 model WorkUpdate {
-  id          Int      @id @default(autoincrement())
-
-  description String
-
+  id            Int         @id @default(autoincrement())
   serviceCallId Int
-  serviceCall   ServiceCall @relation(fields: [serviceCallId], references: [id])
+  serviceCall   ServiceCall @relation(fields: [serviceCallId], references: [id], onDelete: Cascade)
+  engineerId    Int
+  engineer      User        @relation("EngineerUpdates", fields: [engineerId], references: [id])
+  description   String
+  hoursWorked   Float?
+  notes         String?
+  spareParts    SparePart[]
+  images        WorkImage[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
-  engineerId Int
-  engineer   User @relation(fields: [engineerId], references: [id])
-
-  createdAt DateTime @default(now())
-images WorkImage[]
-  spareParts SparePart[]
+  @@index([serviceCallId])
+  @@index([engineerId])
 }
 
 model SparePart {
-  id        Int      @id @default(autoincrement())
-
-  partName  String
-  capacity  String?
-
-  oldSerial String?
-  newSerial String?
-
+  id           Int        @id @default(autoincrement())
   workUpdateId Int
-  workUpdate   WorkUpdate @relation(fields: [workUpdateId], references: [id])
+  workUpdate   WorkUpdate @relation(fields: [workUpdateId], references: [id], onDelete: Cascade)
+  partName     String
+  capacity     String?
+  oldSerial    String?
+  newSerial    String?
+  quantity     Int        @default(1)
+  cost         Float?
+  createdAt    DateTime   @default(now())
 
-  createdAt DateTime @default(now())
+  @@index([workUpdateId])
 }
 
 model WorkImage {
-  id           Int @id @default(autoincrement())
-
-  imageUrl     String
-  type         ImageType
-
+  id           Int        @id @default(autoincrement())
   workUpdateId Int
-  workUpdate   WorkUpdate @relation(fields: [workUpdateId], references: [id])
+  workUpdate   WorkUpdate @relation(fields: [workUpdateId], references: [id], onDelete: Cascade)
+  imageUrl     String
+  type         String?    // BEFORE, AFTER, SPARE_PART, OTHER
+  caption      String?
+  createdAt    DateTime   @default(now())
 
+  @@index([workUpdateId])
+}
+
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  action     String   // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, EXPORT, etc.
+  entityType String?  // Customer, Device, ServiceCall, User, etc.
+  entityId   Int?
+  changes    Json?    // Store before/after values for audit
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+// NEW: Notifications system
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  message   String
+  type      String   // INFO, SUCCESS, WARNING, ERROR
+  isRead    Boolean  @default(false)
+  link      String?  // Optional link to related entity
   createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([isRead])
 }
 
-enum ImageType {
-  BEFORE
-  AFTER
-}
+// Migration command:
+// npx prisma migrate dev --name add_all_improvements
+// npx prisma generate
