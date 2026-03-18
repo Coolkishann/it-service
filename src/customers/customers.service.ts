@@ -5,19 +5,11 @@ import { CreateCustomerDto, UpdateCustomerDto, QueryCustomerDto } from './dto/cu
 
 @Injectable()
 export class CustomersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createCustomerDto: CreateCustomerDto) {
     return this.prisma.customer.create({
       data: createCustomerDto,
-      include: {
-        office: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
     });
   }
 
@@ -48,12 +40,6 @@ export class CustomersService {
       take: limit,
       orderBy: { [sortBy]: sortOrder },
       include: {
-        office: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         branches: {
           select: {
             id: true,
@@ -83,7 +69,6 @@ export class CustomersService {
     const customer = await this.prisma.customer.findUnique({
       where: { id },
       include: {
-        office: true,
         branches: {
           include: {
             devices: {
@@ -114,9 +99,6 @@ export class CustomersService {
     return this.prisma.customer.update({
       where: { id },
       data: updateCustomerDto,
-      include: {
-        office: true,
-      },
     });
   }
 
@@ -138,8 +120,8 @@ export class CustomersService {
     });
   }
 
-  async getStats(officeFilter: any) {
-    const where = officeFilter;
+  async getStats(filter: any) {
+    const where = filter;
 
     const [totalCustomers, activeCustomers, totalRevenue] = await Promise.all([
       this.prisma.customer.count({ where }),

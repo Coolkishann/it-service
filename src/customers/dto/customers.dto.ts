@@ -35,10 +35,6 @@ export class CreateCustomerDto {
   @IsOptional()
   country?: string;
 
-  @IsNumber()
-  @Type(() => Number)
-  officeId: number;
-
   @IsString()
   @IsOptional()
   contactPerson?: string;
@@ -111,8 +107,4 @@ export class QueryCustomerDto {
   @IsOptional()
   @IsString()
   sortOrder?: 'asc' | 'desc' = 'desc';
-
-  @IsOptional()
-  @Type(() => Number)
-  officeId?: number;
 }

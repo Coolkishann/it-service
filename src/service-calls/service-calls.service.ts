@@ -16,7 +16,6 @@ export class ServiceCallsService {
         status: data.status || 'PENDING',
         deviceId: data.deviceId,
         engineerId: data.engineerId,
-        officeId: data.officeId,
         scheduledDate: data.scheduledDate ? new Date(data.scheduledDate) : undefined,
       },
       include: {

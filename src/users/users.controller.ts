@@ -1,11 +1,24 @@
-import { Controller, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query } from '@nestjs/common';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-    constructor(private readonly usersService: UsersService) {}
+    constructor(private readonly usersService: UsersService) { }
+
+    @Get()
+    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+    findAll(@Query('role') role?: string) {
+        return this.usersService.findAll(role);
+    }
+
+    @Post()
+    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+    create(@Body() body: any) {
+        return this.usersService.create(body);
+    }
+
     @Patch('change-role/:id')
     @Roles(Role.SUPER_ADMIN)
     changeRole(

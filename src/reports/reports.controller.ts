@@ -1,126 +1,89 @@
-// src/reports/reports.controller.ts - IMPROVED VERSION
-import { Controller, Get, Param, Res, Query, ParseIntPipe } from "@nestjs/common";
-import { ReportsService } from "./reports.service";
-import type { Response } from "express";
-import { Roles } from "../common/decorators/roles.decorator";
-import { Role } from "../common/enums/role.enum";
+import { Controller, Get, Query, Param, Res, ParseIntPipe } from '@nestjs/common';
+import { ReportsService } from './reports.service';
+import express from 'express';
 
 @Controller('reports')
 export class ReportsController {
-    constructor(private service: ReportsService) { }
+    constructor(private readonly reportsService: ReportsService) { }
 
-    // Engineer Performance Report
-    @Get('engineer-performance')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    getEngineerReport(@Query('startDate') startDate?: string, @Query('endDate') endDate?: string) {
-        return this.service.engineerReport(startDate, endDate);
+    @Get('engineers')
+    async getEngineerReport(
+        @Query('startDate') startDate?: string,
+        @Query('endDate') endDate?: string,
+    ) {
+        return this.reportsService.engineerReport(startDate, endDate);
     }
 
-    // Device History
-    @Get('device-history/:id')
-    deviceHistory(@Param('id', ParseIntPipe) id: number) {
-        return this.service.deviceHistory(id);
+    @Get('device/:id')
+    async getDeviceHistory(@Param('id', ParseIntPipe) id: number) {
+        return this.reportsService.deviceHistory(id);
     }
 
-    // Branch Report
-    @Get('branch-report')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    branchReport() {
-        return this.service.branchReport();
+    @Get('branches')
+    async getBranchReport() {
+        return this.reportsService.branchReport();
     }
 
-    // Export Engineer Report to Excel
-    @Get('engineer-excel')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    async exportEngineerExcel(@Res() res: Response) {
-        const buffer = await this.service.exportEngineerExcel();
-
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            `attachment; filename=engineer-report-${new Date().toISOString().split('T')[0]}.xlsx`
-        );
-
-        res.send(buffer);
-    }
-
-    // NEW: Dashboard Analytics
-    @Get('dashboard-analytics')
+    @Get('analytics')
     async getDashboardAnalytics(
         @Query('startDate') startDate?: string,
         @Query('endDate') endDate?: string,
-        @Query('officeId') officeId?: number
     ) {
-        return this.service.getDashboardAnalytics(startDate, endDate, officeId);
+        return this.reportsService.getDashboardAnalytics(startDate, endDate);
     }
 
-    // NEW: Service Call Trends
-    @Get('service-call-trends')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    async getServiceCallTrends(
-        @Query('period') period: 'day' | 'week' | 'month' = 'month',
-        @Query('officeId') officeId?: number
-    ) {
-        return this.service.getServiceCallTrends(period, officeId);
+    @Get('trends')
+    async getServiceCallTrends(@Query('period') period: 'day' | 'week' | 'month' = 'day') {
+        return this.reportsService.getServiceCallTrends(period);
     }
 
-    // NEW: Device Utilization Report
-    @Get('device-utilization')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    async getDeviceUtilization(@Query('officeId') officeId?: number) {
-        return this.service.getDeviceUtilization(officeId);
+    @Get('utilization')
+    async getDeviceUtilization() {
+        return this.reportsService.getDeviceUtilization();
     }
 
-    // NEW: Export Branch Report to Excel
-    @Get('branch-excel')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    async exportBranchExcel(@Res() res: Response) {
-        const buffer = await this.service.exportBranchExcel();
-
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            `attachment; filename=branch-report-${new Date().toISOString().split('T')[0]}.xlsx`
-        );
-
-        res.send(buffer);
-    }
-
-    // NEW: Export Service Calls to Excel
-    @Get('service-calls-excel')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
-    async exportServiceCallsExcel(
-        @Res() res: Response,
-        @Query('status') status?: string,
-        @Query('priority') priority?: string
-    ) {
-        const buffer = await this.service.exportServiceCallsExcel(status, priority);
-
-        res.setHeader(
-            'Content-Type',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        );
-        res.setHeader(
-            'Content-Disposition',
-            `attachment; filename=service-calls-${new Date().toISOString().split('T')[0]}.xlsx`
-        );
-
-        res.send(buffer);
-    }
-
-    // NEW: Monthly Summary Report
-    @Get('monthly-summary')
-    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+    @Get('summary')
     async getMonthlySummary(
         @Query('year', ParseIntPipe) year: number,
-        @Query('month', ParseIntPipe) month: number
+        @Query('month', ParseIntPipe) month: number,
     ) {
-        return this.service.getMonthlySummary(year, month);
+        return this.reportsService.getMonthlySummary(year, month);
+    }
+
+    @Get('export/engineers')
+    async exportEngineerExcel(@Res() res: express.Response) {
+        const buffer = await this.reportsService.exportEngineerExcel();
+        res.set({
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition': 'attachment; filename="engineer_report.xlsx"',
+            'Content-Length': buffer.byteLength,
+        });
+        res.end(buffer);
+    }
+
+    @Get('export/branches')
+    async exportBranchExcel(@Res() res: express.Response) {
+        const buffer = await this.reportsService.exportBranchExcel();
+        res.set({
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition': 'attachment; filename="branch_report.xlsx"',
+            'Content-Length': buffer.byteLength,
+        });
+        res.end(buffer);
+    }
+
+    @Get('export/service-calls')
+    async exportServiceCallsExcel(
+        @Res() res: express.Response,
+        @Query('status') status?: string,
+        @Query('priority') priority?: string,
+    ) {
+        const buffer = await this.reportsService.exportServiceCallsExcel(status, priority);
+        res.set({
+            'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition': 'attachment; filename="service_calls_report.xlsx"',
+            'Content-Length': buffer.byteLength,
+        });
+        res.end(buffer);
     }
 }

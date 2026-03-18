@@ -216,9 +216,8 @@ export class ReportsService {
     }
 
     // NEW: Dashboard Analytics
-    async getDashboardAnalytics(startDate?: string, endDate?: string, officeId?: number) {
+    async getDashboardAnalytics(startDate?: string, endDate?: string) {
         const where: any = {};
-        if (officeId) where.officeId = officeId;
         if (startDate && endDate) {
             where.createdAt = {
                 gte: new Date(startDate),
@@ -238,16 +237,16 @@ export class ReportsService {
             activeEngineers,
             totalCustomers,
         ] = await Promise.all([
-            this.prisma.device.count({ where: officeId ? { officeId } : {} }),
+            this.prisma.device.count({ where: {} }),
             this.prisma.device.count({ where: { ...where, status: 'ACTIVE' } }),
             this.prisma.device.count({ where: { ...where, status: 'FAULTY' } }),
             this.prisma.serviceCall.count({ where }),
             this.prisma.serviceCall.count({ where: { ...where, status: 'PENDING' } }),
             this.prisma.serviceCall.count({ where: { ...where, status: 'IN_PROGRESS' } }),
             this.prisma.serviceCall.count({ where: { ...where, status: 'RESOLVED' } }),
-            this.prisma.user.count({ where: { role: 'ENGINEER', ...(officeId ? { officeId } : {}) } }),
-            this.prisma.user.count({ where: { role: 'ENGINEER', isActive: true, ...(officeId ? { officeId } : {}) } }),
-            this.prisma.customer.count({ where: officeId ? { officeId } : {} }),
+            this.prisma.user.count({ where: { role: 'ENGINEER' } }),
+            this.prisma.user.count({ where: { role: 'ENGINEER', isActive: true } }),
+            this.prisma.customer.count({ where: {} }),
         ]);
 
         return {
@@ -275,9 +274,8 @@ export class ReportsService {
     }
 
     // NEW: Service Call Trends
-    async getServiceCallTrends(period: 'day' | 'week' | 'month', officeId?: number) {
+    async getServiceCallTrends(period: 'day' | 'week' | 'month') {
         const where: any = {};
-        if (officeId) where.officeId = officeId;
 
         // Get last 30 days/weeks/months based on period
         const serviceCalls = await this.prisma.serviceCall.findMany({
@@ -332,9 +330,8 @@ export class ReportsService {
     }
 
     // NEW: Device Utilization Report
-    async getDeviceUtilization(officeId?: number) {
+    async getDeviceUtilization() {
         const where: any = {};
-        if (officeId) where.officeId = officeId;
 
         const devices = await this.prisma.device.findMany({
             where,

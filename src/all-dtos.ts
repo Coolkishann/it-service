@@ -1,7 +1,14 @@
-// ==================== BRANCHES DTOs ====================
-// src/branches/dto/branch.dto.ts
-import { IsDateString, IsEnum } from 'class-validator';
-// import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsEnum,
+  IsDateString,
+  IsArray,
+  ValidateNested
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateBranchDto {
   @IsString()
@@ -35,10 +42,6 @@ export class CreateBranchDto {
   @IsNumber()
   @Type(() => Number)
   customerId: number;
-
-  @IsNumber()
-  @Type(() => Number)
-  officeId: number;
 
   @IsString()
   @IsOptional()
@@ -155,10 +158,6 @@ export class CreateDeviceDto {
   @Type(() => Number)
   branchId: number;
 
-  @IsNumber()
-  @Type(() => Number)
-  officeId: number;
-
   @IsString()
   @IsOptional()
   purchaseOrderNumber?: string;
@@ -265,10 +264,6 @@ export class CreateServiceCallDto {
   @IsOptional()
   engineerId?: number;
 
-  @IsNumber()
-  @Type(() => Number)
-  officeId: number;
-
   @IsDateString()
   @IsOptional()
   scheduledDate?: string;
@@ -311,8 +306,7 @@ export class UpdateServiceCallDto {
 
 // ==================== WORK UPDATES DTOs ====================
 // src/work-updates/dto/work-update.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsArray, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
+
 
 class SparePartDto {
   @IsString()
