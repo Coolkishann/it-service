@@ -6,7 +6,7 @@ import express from 'express';
 export class ReportsController {
     constructor(private readonly reportsService: ReportsService) { }
 
-    @Get('engineers')
+    @Get(['engineers', 'engineer-performance'])
     async getEngineerReport(
         @Query('startDate') startDate?: string,
         @Query('endDate') endDate?: string,
@@ -19,12 +19,12 @@ export class ReportsController {
         return this.reportsService.deviceHistory(id);
     }
 
-    @Get('branches')
+    @Get(['branches', 'branch-report'])
     async getBranchReport() {
         return this.reportsService.branchReport();
     }
 
-    @Get('analytics')
+    @Get(['analytics', 'dashboard-analytics'])
     async getDashboardAnalytics(
         @Query('startDate') startDate?: string,
         @Query('endDate') endDate?: string,
@@ -32,7 +32,7 @@ export class ReportsController {
         return this.reportsService.getDashboardAnalytics(startDate, endDate);
     }
 
-    @Get('trends')
+    @Get(['trends', 'service-call-trends'])
     async getServiceCallTrends(@Query('period') period: 'day' | 'week' | 'month' = 'day') {
         return this.reportsService.getServiceCallTrends(period);
     }

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Request } from '@nestjs/common';
 import { WorkUpdatesService } from './work-updates.service';
 import { Roles } from '../common/decorators/roles.decorator';
 import { Role } from '../common/enums/role.enum';
@@ -11,8 +11,8 @@ export class WorkUpdatesController {
   // Engineer updates work
   @Post()
   @Roles(Role.ENGINEER, Role.ADMIN)
-  create(@Body() body: any) {
-    return this.service.create(body);
+  create(@Body() body: any, @Request() req: any) {
+    return this.service.create(body, req.user);
   }
 
   // View history of a service call

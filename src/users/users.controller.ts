@@ -13,6 +13,18 @@ export class UsersController {
         return this.usersService.findAll(role);
     }
 
+    @Get(':id')
+    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+    findOne(@Param('id') id: string) {
+        return this.usersService.findOne(+id);
+    }
+
+    @Patch(':id')
+    @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+    update(@Param('id') id: string, @Body() body: any) {
+        return this.usersService.update(+id, body);
+    }
+
     @Post()
     @Roles(Role.SUPER_ADMIN, Role.ADMIN)
     create(@Body() body: any) {

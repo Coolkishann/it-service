@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, Request } from '@nestjs/common';
 import { ServiceCallsService } from './service-calls.service';
 
 @Controller('service-calls')
@@ -11,8 +11,8 @@ export class ServiceCallsController {
     }
 
     @Get()
-    findAll(@Query() filter: any) {
-        return this.serviceCallsService.findAll(filter);
+    findAll(@Query() filter: any, @Request() req: any) {
+        return this.serviceCallsService.findAll(filter, req.user);
     }
 
     @Get(':id')
@@ -21,16 +21,17 @@ export class ServiceCallsController {
     }
 
     @Patch(':id')
-    update(@Param('id', ParseIntPipe) id: number, @Body() updateServiceCallDto: any) {
-        return this.serviceCallsService.update(id, updateServiceCallDto);
+    update(@Param('id', ParseIntPipe) id: number, @Body() updateServiceCallDto: any, @Request() req: any) {
+        return this.serviceCallsService.update(id, updateServiceCallDto, req.user);
     }
 
     @Patch(':id/status')
     updateStatus(
         @Param('id', ParseIntPipe) id: number,
         @Body('status') status: string,
+        @Request() req: any,
     ) {
-        return this.serviceCallsService.updateStatus(id, status);
+        return this.serviceCallsService.updateStatus(id, status, req.user);
     }
 
     @Patch(':id/assign')

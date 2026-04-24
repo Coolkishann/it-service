@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { PrismaService } from "prisma/prisma.service";
+import { Role } from "../common/enums/role.enum";
 
 @Injectable()
 export class ServiceCallsService {
@@ -39,9 +40,16 @@ export class ServiceCallsService {
     });
   }
 
-  async findAll(filter: any) {
+  async findAll(filter: any, user: any) {
+    const where = { ...filter };
+
+    // If the user is an ENGINEER, they should only see their assigned tasks
+    if (user && user.role === Role.ENGINEER) {
+      where.engineerId = user.userId;
+    }
+
     return this.prisma.serviceCall.findMany({
-      where: filter,
+      where,
       include: {
         device: {
           include: {
@@ -126,7 +134,20 @@ export class ServiceCallsService {
     return serviceCall;
   }
 
-  async update(id: number, data: any) {
+  async update(id: number, data: any, user: any) {
+    const serviceCall = await this.prisma.serviceCall.findUnique({
+      where: { id },
+    });
+
+    if (!serviceCall) {
+      throw new NotFoundException(`Service call #${id} not found`);
+    }
+
+    // Authorization check
+    if (user.role === Role.ENGINEER && serviceCall.engineerId !== user.userId) {
+      throw new ForbiddenException('You are not authorized to update this service call as it is assigned to another engineer.');
+    }
+
     // Build data object carefully
     const updateData: any = {};
     if (data.title !== undefined) updateData.title = data.title;
@@ -168,7 +189,20 @@ export class ServiceCallsService {
     });
   }
 
-  async updateStatus(id: number, status: string) {
+  async updateStatus(id: number, status: string, user: any) {
+    const serviceCall = await this.prisma.serviceCall.findUnique({
+      where: { id },
+    });
+
+    if (!serviceCall) {
+      throw new NotFoundException(`Service call #${id} not found`);
+    }
+
+    // Authorization check
+    if (user.role === Role.ENGINEER && serviceCall.engineerId !== user.userId) {
+      throw new ForbiddenException('You are not authorized to update the status of this service call as it is assigned to another engineer.');
+    }
+
     const updateData: any = { status };
 
     // Auto-set resolved date on RESOLVED
