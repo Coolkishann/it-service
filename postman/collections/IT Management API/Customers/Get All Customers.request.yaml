@@ -1,15 +1,14 @@
 $kind: http-request
 name: Get All Customers
 method: GET
-url: '{{baseUrl}}/customers'
+url: /customers
 order: 2000
 description: |-
   Get all customers. Results are filtered based on the user's office assignment.
-  
+
   Uses OfficeGuard for office-based access control.
 scripts:
   - type: afterResponse
-    language: text/javascript
     code: |-
       pm.test("Status code is not 500", function () {
           pm.response.to.not.have.status(500);
@@ -22,3 +21,4 @@ scripts:
       pm.test("Status code is success", function () {
           pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);
       });
+    language: text/javascript
