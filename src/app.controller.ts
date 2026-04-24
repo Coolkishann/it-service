@@ -6,7 +6,7 @@ import { Public } from './common/decorators/public.decorator';
 export class AppController {
 
   @Public()
-  @Get('health')
+  @Get(['health', 'api/health'])
   health() {
     return {
       status: 'ok',
